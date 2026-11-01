@@ -1,0 +1,6 @@
+.git
+**/.git
+models
+maps
+**/__pycache__
+.env

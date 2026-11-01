@@ -1,0 +1,16 @@
+{
+  "name": "minipupper-ai: dev",
+  "dockerComposeFile": ["../../compose.yaml"],
+  "service": "dev",
+  "runServices": ["dev"],
+  "workspaceFolder": "/workspace",
+  "remoteUser": "dev",
+  "shutdownAction": "none",
+  "postCreateCommand": "pixi install --all",
+  "initializeCommand": "xhost +SI:localuser:$USER || true",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "ms-vscode.cpptools", "ranch-hand-robotics.rde-pack", "jjjermiah.pixi-vscode"]
+    }
+  }
+}

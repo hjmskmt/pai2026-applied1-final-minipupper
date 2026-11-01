@@ -1,0 +1,79 @@
+# PC側の依存（ROS 2 / エージェント）。dev コンテナの中で使う
+#   pixi run build            # colcon build（/ros_ws）
+#   pixi shell                # ROS 2 の環境に入る
+#   pixi shell -e agent       # ROS 2 + エージェントの環境に入る
+# Isaac Lab（rl）は Python が違うため、ここには入れず公式イメージを使う
+[workspace]
+name = "minipupper_ai"
+channels = ["robostack-humble", "conda-forge"]
+platforms = ["linux-64"]
+
+# ---- ROS 2 Humble（RoboStack）: default 環境 ----
+[dependencies]
+python = "3.12.*"
+ros-humble-desktop = "*"
+ros-humble-navigation2 = "*"
+ros-humble-nav2-bringup = "*"
+ros-humble-slam-toolbox = "*"
+ros-humble-teleop-twist-keyboard = "*"
+ros-humble-teleop-twist-joy = "*"
+ros-humble-image-transport-plugins = "*"
+ros-humble-rqt-common-plugins = "*"
+ros-humble-joint-state-publisher-gui = "*"
+# ros_ws/src（mini_pupper_ros, ldlidar）の package.xml の依存。rosdep の代わりにここへ書く
+ros-humble-cartographer-ros = "*"
+ros-humble-controller-manager = "*"
+ros-humble-ros2-control = "*"
+ros-humble-ros2-controllers = "*"
+ros-humble-realtime-tools = "*"
+ros-humble-gazebo-ros-pkgs = "*"
+ros-humble-gazebo-ros2-control = "*"
+ros-humble-imu-tools = "*"
+ros-humble-joint-state-publisher = "*"
+ros-humble-robot-state-publisher = "*"
+ros-humble-tf-transformations = "*"
+ros-humble-xacro = "*"
+eigen = "3.4.*"  # 5.x は EIGEN3_INCLUDE_DIRS を定義しない（mini_pupper_fleet が使う）
+numpy = "*"
+transforms3d = "*"
+# ビルドツール
+compilers = "*"
+cmake = "*"
+pkg-config = "*"
+make = "*"
+ninja = "*"
+colcon-common-extensions = "*"
+ros-humble-vision-msgs = ">=4.1.1,<5"
+
+[pypi-dependencies]
+simple-pid = "*"
+ultralytics = ">=8.4.194, <9"
+clip = { git = "https://github.com/ultralytics/CLIP.git" }
+
+[activation]
+scripts = ["scripts/pixi/ros_setup.sh"]
+
+[tasks]
+# Gazebo のシミュレーション（画面なしは `pixi run sim gui:=false`）。先にホストで xhost +SI:localuser:$USER
+sim = "ros2 launch mini_pupper_simulation bringup.launch.py"
+build = "colcon --log-base /ros_ws/log build --metas ros_ws/colcon.meta --base-paths /ros_ws/src --build-base /ros_ws/build --install-base /ros_ws/install --symlink-install"
+
+# ---- エージェント（LLM/VLM、MCP、音声）----
+[feature.agent.dependencies]
+python-sounddevice = "*"
+portaudio = "*"
+ffmpeg = "*"
+google-genai = ">=2.33.0,<3"
+
+[feature.agent.pypi-dependencies]
+anthropic = "*"
+mcp = "*"
+faster-whisper = "*"
+
+[feature.agent.tasks]
+agent = { cmd = "python -m pupper_agent.chat", cwd = "agent" }
+agent-gemini = { cmd = "python -m pupper_agent.chat_gemini", cwd = "agent" }
+
+[environments]
+default = { solve-group = "main" }
+agent = { features = ["agent"], solve-group = "main" }

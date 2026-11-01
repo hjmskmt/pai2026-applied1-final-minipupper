@@ -1,0 +1,58 @@
+# PC側の開発環境:
+#   docker compose up -d                  # dev（ROS 2 / エージェント。依存は pixi.toml）
+#
+# 重いデータ（rosbag など）は .env の DATA_DIR に置かれる
+name: minipupper-ai
+
+x-gpu: &gpu
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]
+
+services:
+  # ROS 2（RViz, Nav2, SLAM）とエージェント。pixi の環境で切り替える（default / agent）
+  dev:
+    <<: *gpu
+    image: minipupper-ai/dev:latest
+    build:
+      context: docker/dev
+    network_mode: host
+    ipc: host
+    init: true                # 終了したプロセス（ゾンビ）を回収する
+    env_file: .env
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    volumes:
+      # リポジトリ全体（pixi.toml, agent/, CLAUDE.md, .claude/ など）
+      - .:/workspace
+      # colcon のワークスペース。build/install/log は named volume
+      - ./ros_ws/src:/ros_ws/src
+      - ros_build:/ros_ws/build
+      - ros_install:/ros_ws/install
+      - ros_log:/ros_ws/log
+      - ./maps:/maps
+      - ./models:/models
+      # pixi の環境・パッケージキャッシュ、Whisper のモデル
+      - dev_cache:/home/dev/.cache
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      # 重いデータ（rosbag など）
+      - ${DATA_DIR:?DATA_DIR を .env に設定してください}:/data
+    devices:
+      - /dev/snd:/dev/snd
+    group_add:
+      - audio
+    stdin_open: true
+    tty: true
+    command: sleep infinity
+
+volumes:
+  ros_build:
+  ros_install:
+  ros_log:
+  dev_cache:

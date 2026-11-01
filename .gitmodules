@@ -1,0 +1,8 @@
+[submodule "ros_ws/src/mini_pupper_ros"]
+	path = ros_ws/src/mini_pupper_ros
+	url = https://github.com/mangdangroboticsclub/mini_pupper_ros.git
+	branch = ros2-dev
+[submodule "ros_ws/src/third_party/ldlidar_stl_ros2"]
+	path = ros_ws/src/third_party/ldlidar_stl_ros2
+	url = https://github.com/ldrobotSensorTeam/ldlidar_stl_ros2.git
+	branch = master

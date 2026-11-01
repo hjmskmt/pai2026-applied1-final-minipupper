@@ -1,0 +1,3 @@
+# pixi のシステム設定（/etc/pixi/config.toml）
+# 環境の実体をリポジトリの .pixi ではなく named volume（~/.cache）に置く
+detached-environments = "/home/dev/.cache/pixi/envs"

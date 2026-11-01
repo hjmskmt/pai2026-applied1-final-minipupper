@@ -1,0 +1,13 @@
+.env
+__pycache__/
+*.pyc
+# colconの成果物（通常はnamed volumeに置くが念のため）
+ros_ws/build/
+ros_ws/install/
+ros_ws/log/
+# Claude Code の個人設定
+.claude/settings.local.json
+# pixi の環境（通常は named volume に置くが念のため）
+.pixi/
+/log/# 講座の資料・ジングルなど、コミットしない手元のファイル（コンテナでは /workspace/data。DATA_DIR の /data とは別）
+/data/
