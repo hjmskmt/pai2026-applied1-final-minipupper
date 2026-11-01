@@ -1,6 +1,6 @@
-# minipupper_ai
+# PAI 2026 応用1 最終課題：MiniPupper 2 Pro を言葉の指示で動かす
 
-MiniPupper 2 Pro を、言葉の指示で動かすプロジェクト。
+講座「PAI 2026 応用1」の最終課題として、個人で作ったものです（MangDang の公式プロジェクトではありません）。
 
 - **言葉で歩かせる**：ユーザーの文を LLM（Gemini、または Claude）が読み、ツール（`move` / `move_distance` / `set_pose` / `approach` / `stop`）を選ぶ。速度と時間の上限は LLM ではなく `agent/pupper_agent/robot.py` が必ずかける → `agent/`
 - **言葉で指定した物を探して近づく（`approach`）**：ロボットのカメラ画像を PC の YOLO-World で検出（`white plush toy` のように言葉で指定）し、bbox の向きをカメラで、距離を LiDAR で測る → `ros_ws/src/pupper_vision/`、`agent/pupper_agent/robot.py`
